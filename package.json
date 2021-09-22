@@ -2,7 +2,7 @@
   "name": "backend-project-lvl3",
   "version": "1.0.0",
   "description": "[![Actions Status](https://github.com/Ultras-sur/backend-project-lvl3/workflows/hexlet-check/badge.svg)](https://github.com/Ultras-sur/backend-project-lvl3/actions)",
-  "main": "index.js",
+  "main": "bin/page-loader.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -18,6 +18,7 @@
   "type": "module",
   "homepage": "https://github.com/Ultras-sur/backend-project-lvl3#readme",
   "dependencies": {
+    "axios": "^0.21.4",
     "commander": "^7.1.0",
     "lodash": "4.17.21"
   },
