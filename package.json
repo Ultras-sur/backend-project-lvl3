@@ -15,9 +15,13 @@
   "bugs": {
     "url": "https://github.com/Ultras-sur/backend-project-lvl3/issues"
   },
+  "type": "module",
   "homepage": "https://github.com/Ultras-sur/backend-project-lvl3#readme",
   "dependencies": {
-    "lodash": "^4.17.21",
+    "commander": "^7.1.0",
+    "lodash": "4.17.21"
+  },
+  "devDependencies": {
     "eslint": "^7.17.0",
     "eslint-config-airbnb-base": "^14.2.1",
     "eslint-config-prettier": "^8.1.0",
