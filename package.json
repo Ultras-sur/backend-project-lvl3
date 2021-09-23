@@ -6,6 +6,9 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
+  "bin": {
+    "page-loader": "bin/page-loader.js"
+  },
   "repository": {
     "type": "git",
     "url": "git+ssh://git@github.com/Ultras-sur/backend-project-lvl3.git"
