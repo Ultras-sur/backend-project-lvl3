@@ -1,16 +1,16 @@
 #!/usr/bin/env node
-import { Command } from "commander/esm.mjs";
-import { saveUrl } from "../src/utils.js";
-import axios from "axios";
+import { Command } from 'commander/esm.mjs';
+import axios from 'axios';
+import { saveUrl } from '../src/utils.js';
 
 const program = new Command();
 
 program
-  .description("Page loader utility")
-  .arguments("<url>")
-  .version("0.0.1")
+  .description('Page loader utility')
+  .arguments('<url>')
+  .version('0.0.1')
   .option(
-    "-o, --output [dir]",
+    '-o, --output [dir]',
     "output dir (default: '/home/ultras/Documents/backend-project-lvl3/__loaded_pages__')"
   )
   .action((url) => {
