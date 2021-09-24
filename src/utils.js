@@ -18,12 +18,14 @@ export const saveUrl = (url, client = axios, dir = defaultDir) => {
   try {
     client
       .get(url)
-      .then((res) =>
-        fs.writeFile(`${filePath}.html`, res.data, (error) =>
-          console.log(error)
+      .then((response) =>
+        fs.writeFile(`${filePath}.html`, response.data, (e) =>
+          console.log(`Can't write file: ${e}`)
         )
       );
   } catch (e) {
     console.log(`Can't load page: ${e}`);
   }
+  console.log(filePath);
+  return filePath;
 };
