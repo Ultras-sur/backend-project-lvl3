@@ -1,4 +1,7 @@
 import fs from 'fs/promises';
-import path from 'path';
-import axios from 'axios';
-import * as cheerio from 'cheerio';
+
+const saveData = (fileName, data) => {
+  fs.writeFile(`${fileName}.html`, data, (error) => console.log(error));
+};
+
+export { saveData };
