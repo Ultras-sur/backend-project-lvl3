@@ -53,10 +53,14 @@ const pageLoader = (url, dir = defaultDir, client = axios) => {
           const link = new URL($(elem).attr('href'), url).toString();
           if (converter.getHost(link) === converter.getHost(url)) {
             if (link.match(/\.w+$/gi) !== null) {
-              $(elem).attr(
-                'href',
-                `/${folderForFiles}/${converter.fileName(link)}`
+              const filepath = path.join(
+                folderForFiles,
+                converter.fileName(link)
               );
+              $(elem).attr('href', filepath);
+              client
+                .get(link)
+                .then((response) => saveData(filepath, response.data));
             } else {
               $(elem).attr('href', `/${converter.pageName(link)}.html`);
               pageLoader(link);
