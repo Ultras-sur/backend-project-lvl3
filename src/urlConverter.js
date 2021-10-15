@@ -19,6 +19,8 @@ const fileNameBuilder = (fileUrl) => {
   return `${fileName}${format}`;
 };
 
+const getUrlHost = (url) => new URL(url).host;
+
 const urlConverter = {
   pageName: (url) => pageNameBuilder(url),
   fileName: (url) => fileNameBuilder(url),

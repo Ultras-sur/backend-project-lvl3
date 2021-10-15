@@ -1,7 +1,7 @@
 import fs from 'fs/promises';
 
-const saveData = (fileName, data) => {
-  fs.writeFile(`${fileName}.html`, data, (error) => console.log(error));
+const saveData = (filepath, data) => {
+  fs.writeFile(filepath, data, (error) => console.log(error));
 };
 
-export { saveData };
+export default saveData;
