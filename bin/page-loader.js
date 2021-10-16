@@ -1,7 +1,8 @@
 #!/usr/bin/env node
 import { Command } from 'commander/esm.mjs';
 import axios from 'axios';
-import { saveUrl } from '../src/index.js';
+// import { saveUrl } from '../src/index.js';
+import saveUrl from '../src/index2.js';
 
 const program = new Command();
 

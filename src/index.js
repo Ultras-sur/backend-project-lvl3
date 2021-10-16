@@ -3,7 +3,7 @@ import path from 'path';
 import axios from 'axios';
 import * as cheerio from 'cheerio';
 import converter from './urlConverter.js';
-import { saveData } from './utils.js';
+import saveData from './utils.js';
 
 const defaultDir = './__loaded_pages__';
 

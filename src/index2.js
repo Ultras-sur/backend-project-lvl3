@@ -21,7 +21,11 @@ const pageLoader = (url, dir = defaultDir, client = axios) => {
             folderForFiles,
             converter.fileName(imageLink)
           );
-          $(elem).attr('src', filePath);
+          const newLink = path.join(
+            converter.folderName(url),
+            converter.fileName(imageLink)
+          );
+          $(elem).attr('src', newLink);
           console.log(imageLink);
           fs.mkdir(folderForFiles, { recursive: true }, (err) => {
             if (err) return;
@@ -35,34 +39,45 @@ const pageLoader = (url, dir = defaultDir, client = axios) => {
           );
         });
         $('script').each((i, elem) => {
-          const scriptLink = new URL($(elem).attr('src'), url).toString();
-          const filePath = path.join(
-            folderForFiles,
-            converter.fileName(scriptLink)
-          );
-          if (converter.getHost(scriptLink) === converter.getHost(url)) {
-            $(elem).attr('src', `${filePath}`);
-            client
-              .get(scriptLink)
-              .then((response) =>
-                saveData(converter.fileName(scriptLink), response.data)
-              );
+          if ($(elem).attr('src')) {
+            const scriptLink = new URL($(elem).attr('src'), url).toString();
+            const filePath = path.join(
+              folderForFiles,
+              converter.fileName(scriptLink)
+            );
+            const newLink = path.join(
+              converter.folderName(url),
+              converter.fileName(scriptLink)
+            );
+
+            if (converter.getHost(scriptLink) === converter.getHost(url)) {
+              $(elem).attr('src', newLink);
+              client
+                .get(scriptLink)
+                .then((response) => saveData(filePath, response.data));
+            }
           }
         });
         $('link').each((i, elem) => {
           const link = new URL($(elem).attr('href'), url).toString();
+          console.log(link);
           if (converter.getHost(link) === converter.getHost(url)) {
-            if (link.match(/\.w+$/gi) !== null) {
+            console.log(link, link.match(/\.\w+$/gi) !== null);
+            if (link.match(/\.\w+$/gi) !== null) {
               const filepath = path.join(
                 folderForFiles,
                 converter.fileName(link)
               );
-              $(elem).attr('href', filepath);
+              const newLink = path.join(
+                converter.folderName(url),
+                converter.fileName(link)
+              );
+              $(elem).attr('href', newLink);
               client
                 .get(link)
                 .then((response) => saveData(filepath, response.data));
             } else {
-              $(elem).attr('href', `/${converter.pageName(link)}.html`);
+              $(elem).attr('href', `${converter.pageName(link)}.html`);
               pageLoader(link);
             }
           }
