@@ -5,8 +5,48 @@ import axios from 'axios';
 import * as cheerio from 'cheerio';
 import converter from './urlConverter.js';
 import saveData from './utils.js';
+import debug from 'debug';
 
 const defaultDir = './__loaded_pages__';
+
+const tags = [
+  ['img', 'src'],
+  ['script', 'src'],
+  ['link', 'href'],
+];
+
+const tagHandler = ($, [tag, tagAttr]) => {
+  $(tag).each((i, elem) => {
+    const link = new URL($(elem).attr(tagAttr), url).toString();
+    console.log(link);
+    if (converter.getHost(link) === converter.getHost(url)) {
+      if (link.match(/\.\w+$/gi) !== null) {
+        const filePath = path.join(folderForFiles, converter.fileName(link));
+        const newLink = path.join(
+          converter.folderName(url),
+          converter.fileName(link)
+        );
+        $(elem).attr(tagAttr, newLink);
+        if (tag === 'img') {
+          client({
+            method: 'get',
+            url: link,
+            responseType: 'stream',
+          }).then((response) =>
+            response.data.pipe(fsSync.createWriteStream(filePath))
+          );
+        } else {
+          client
+            .get(link)
+            .then((response) => saveData(filePath, response.data));
+        }
+      } else {
+        $(elem).attr(tagAttr, `${converter.pageName(link)}.html`);
+        pageLoader(link);
+      }
+    }
+  });
+};
 
 const pageLoader = (url, dir = defaultDir, client = axios) => {
   const folderForFiles = path.join(dir, converter.folderName(url));
@@ -62,7 +102,6 @@ const pageLoader = (url, dir = defaultDir, client = axios) => {
           const link = new URL($(elem).attr('href'), url).toString();
           console.log(link);
           if (converter.getHost(link) === converter.getHost(url)) {
-            console.log(link, link.match(/\.\w+$/gi) !== null);
             if (link.match(/\.\w+$/gi) !== null) {
               const filepath = path.join(
                 folderForFiles,
