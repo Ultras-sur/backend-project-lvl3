@@ -1,14 +1,14 @@
 import fs from 'fs/promises';
 import path from 'path';
 import axios from 'axios';
-import * as cheerio from 'cheerio';
+import cheerio from 'cheerio';
 import converter from './urlConverter.js';
-import saveData from './utils.js';
+import { saveData } from './utils.js';
 
 const defaultDir = './__loaded_pages__';
 
 // eslint-disable-next-line import/prefer-default-export
-export const saveUrl = (url, dir = defaultDir, client = axios) => {
+const saveUrl = (url, dir = defaultDir, client = axios) => {
   const fileName = converter.fileName(url);
   const filePath = path.join(dir, fileName);
   try {
@@ -25,3 +25,5 @@ export const saveUrl = (url, dir = defaultDir, client = axios) => {
   console.log(`${filePath}.html`);
   return `${filePath}.html`;
 };
+
+export default saveUrl;

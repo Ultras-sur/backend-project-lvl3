@@ -5,7 +5,6 @@ import axios from 'axios';
 import * as cheerio from 'cheerio';
 import converter from './urlConverter.js';
 import saveData from './utils.js';
-import debug from 'debug';
 
 const defaultDir = './__loaded_pages__';
 

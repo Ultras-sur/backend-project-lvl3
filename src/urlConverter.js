@@ -22,7 +22,7 @@ const fileNameBuilder = (fileUrl) => {
 const getUrlHost = (url) => new URL(url).host;
 
 const urlConverter = {
-  pageName: (url) => pageNameBuilder(url),
+  pageName: (url) => `${pageNameBuilder(url)}.html`,
   fileName: (url) => fileNameBuilder(url),
   folderName: (url) => `${pageNameBuilder(url)}_files`,
   getHost: (url) => getUrlHost(url),
