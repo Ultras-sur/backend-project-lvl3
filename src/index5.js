@@ -6,7 +6,7 @@ import cheerio from 'cheerio';
 import debug from 'debug';
 import Listr from 'listr';
 import urlConverter from './urlConverter.js';
-import { saveData, fileIsExists } from './utils.js';
+import { saveData } from './utils.js';
 
 const defaultFolder = './__loaded_pages__';
 
