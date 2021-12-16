@@ -3,7 +3,7 @@ import fs from 'fs';
 import Listr from 'listr';
 
 const saveData = (filepath, data) =>
-  fsp.writeFile(filepath, data, (error) => console.log(error.message));
+  fsp.writeFile(filepath, data, (error) => console.error(error.message));
 
 const fileIsExists = (path) =>
   new Promise((resolve, reject) => {
@@ -12,7 +12,7 @@ const fileIsExists = (path) =>
         return resolve(true);
       }
       if (err.code === 'ENOENT') {
-        console.log(`ERROR: File not found ${path}`);
+        console.error(`ERROR: File not found ${path}`);
         return resolve(false);
       }
       return reject(err.message);

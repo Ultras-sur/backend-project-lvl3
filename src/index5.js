@@ -9,15 +9,25 @@ import urlConverter from './urlConverter.js';
 import { saveData } from './utils.js';
 
 const defaultFolder = './__loaded_pages__';
+const errors = {
+  ENOTFOUND: 'URL is not found',
+  ENOENT: `Can't access to path or not found`,
+};
 
-const checkAccess = (dir) => fsp.access(dir, fs.constants.W_OK);
+const checkAccess = (dir) =>
+  fsp.access(dir, fs.constants.W_OK).catch((err) => {
+    throw new Error(`${errors[err.code]} ${dir}`);
+  });
 
 const pageLoader = (url) =>
   axios
     .get(url)
     .then((response) => response)
     .catch((err) => {
-      throw err.message;
+      // console.error(errors[err.code]);
+      // throw err;
+      // process.exit();
+      throw new Error(errors[err.code]);
     });
 
 const savePage = (filepath, data) =>
@@ -112,6 +122,7 @@ const searchPageResources = (pageContent, pageUrl, resourceFolderPath) => {
   return { $, resources };
 };
 
+/*
 const downLoadResources = (data, resourceFolderPath) => {
   const { $, resources } = data;
   return fsp
@@ -124,7 +135,7 @@ const downLoadResources = (data, resourceFolderPath) => {
     })
     .catch((err) => console.error(err.message));
   // .then(() => $);
-};
+}; */
 
 const buildListrTasks = (arr) =>
   arr.reduce((acc, elem) => {
@@ -136,16 +147,6 @@ const buildListrTasks = (arr) =>
   }, []);
 
 const progressHandle = (list) => {
-  // fs.mkdir('./__loaded_pages__/', { recursive: true });
-  // onst tasks = new Listr(list, { concurrent: true })
-
-  /* const tasks = new Listr([
-    {
-      title: 'Loading Files',
-      task: () => new Listr(list, { concurrent: true }),
-    },
-  ]); */
-
   const tasks = new Listr(list, { concurrent: true });
 
   return tasks
@@ -163,7 +164,6 @@ const downLoadResourcesListr = (data, resourceFolderPath) => {
       return progressHandle(list).then(() => $);
     })
     .catch((err) => console.error(err.message));
-  // .then(() => $);
 };
 
 export default (pageUrl, outputFolder = defaultFolder) => {

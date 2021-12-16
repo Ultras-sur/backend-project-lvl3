@@ -63,7 +63,7 @@ const requester = (url1, pageFolder1 = defaultDir) => {
               }
             } else {
               $(pageTag).attr(tagAttr, `${urlConverter.pageName(link)}`);
-              // eslint-disable-next-line no-use-before-define
+
               if (
                 !fileIsExists(
                   path.join(pageFileFolder, urlConverter.pageName(link))
