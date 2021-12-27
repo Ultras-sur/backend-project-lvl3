@@ -3,7 +3,14 @@ import fs from 'fs';
 import Listr from 'listr';
 
 const saveData = (filepath, data) =>
-  fsp.writeFile(filepath, data, (error) => console.error(error.message));
+  fsp.writeFile(
+    filepath,
+    data,
+    (err) => {
+      throw new Error(err.message);
+    }
+    // console.error(error.message)
+  );
 
 const fileIsExists = (path) =>
   new Promise((resolve, reject) => {

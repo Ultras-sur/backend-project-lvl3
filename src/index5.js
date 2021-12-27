@@ -16,7 +16,7 @@ const errors = {
 
 const checkAccess = (dir) =>
   fsp.access(dir, fs.constants.W_OK).catch((err) => {
-    throw new Error(`${errors[err.code]} ${dir}`);
+    throw new Error(`${errors[err.code]}: ${dir}`);
   });
 
 const pageLoader = (url) =>
@@ -27,7 +27,7 @@ const pageLoader = (url) =>
       // console.error(errors[err.code]);
       // throw err;
       // process.exit();
-      throw new Error(errors[err.code]);
+      throw new Error(`${errors[err.code]}: ${url}`);
     });
 
 const savePage = (filepath, data) =>
@@ -54,8 +54,11 @@ const binaryFileLoader = (fileUrl, filePath) =>
     .then((response) => {
       response.data.pipe(fs.createWriteStream(filePath));
     })
-    .catch((err) =>
-      console.error(`Error saving image: ${err.message} (${fileUrl})`)
+    .catch(
+      (err) => {
+        throw new Error(err);
+      }
+      // console.error(`Error saving image: ${err.message} (${fileUrl})`)
     );
 
 const fileLoader = (url, filePath) =>
@@ -122,7 +125,6 @@ const searchPageResources = (pageContent, pageUrl, resourceFolderPath) => {
   return { $, resources };
 };
 
-/*
 const downLoadResources = (data, resourceFolderPath) => {
   const { $, resources } = data;
   return fsp
@@ -135,13 +137,17 @@ const downLoadResources = (data, resourceFolderPath) => {
     })
     .catch((err) => console.error(err.message));
   // .then(() => $);
-}; */
+};
 
 const buildListrTasks = (arr) =>
   arr.reduce((acc, elem) => {
     acc.push({
       title: `${elem.fileUrl}`,
-      task: () => elem.load(elem.fileUrl, elem.filePath),
+      task: () =>
+        elem.load(elem.fileUrl, elem.filePath).catch(
+          (err) => Promise.reject(new Error(err.message))
+          // throw new Error(err.message);
+        ),
     });
     return acc;
   }, []);
@@ -149,21 +155,17 @@ const buildListrTasks = (arr) =>
 const progressHandle = (list) => {
   const tasks = new Listr(list, { concurrent: true });
 
-  return tasks
-    .run()
-    .catch((err) => console.log(`${err.message} (${err.config.url})`));
+  return tasks.run().catch((err) => console.error(err.message));
+  // console.error(`${err.message} (${err.config.url})`));
 };
 
 const downLoadResourcesListr = (data, resourceFolderPath) => {
   const { $, resources } = data;
 
-  return fsp
-    .mkdir(resourceFolderPath, { recursive: true })
-    .then(() => {
-      const list = buildListrTasks(resources);
-      return progressHandle(list).then(() => $);
-    })
-    .catch((err) => console.error(err.message));
+  return fsp.mkdir(resourceFolderPath, { recursive: true }).then(() => {
+    const list = buildListrTasks(resources);
+    return progressHandle(list).then(() => $);
+  });
 };
 
 export default (pageUrl, outputFolder = defaultFolder) => {
