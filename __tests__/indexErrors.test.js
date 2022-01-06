@@ -60,13 +60,6 @@ beforeAll(async () => {
 test('Check errors', async () => {
   const falseFolder = './1234';
   const falseUrl = 'http://www.tim453.org';
-  // const result = await saveUrl(`${baseURL}/courses`, `${falseFolder}`);
-
-  /* try {
-    await saveUrl(`${baseURL}/courses`, `${falseFolder}`);
-  } catch (e) {
-    expect(e).toThrow(Error);
-  } */
 
   expect(async () => {
     await saveUrl(`${baseURL}/courses`, falseFolder);
@@ -75,10 +68,6 @@ test('Check errors', async () => {
   expect(async () => {
     await saveUrl(falseUrl, tempFolder);
   }).rejects.toThrowError(falseUrl);
-
-  /* expect(async () => {
-    await checkAccess(falseFolder);
-  }).rejects.toThrow(Error); */
 });
 
 //
