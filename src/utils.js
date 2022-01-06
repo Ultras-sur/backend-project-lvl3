@@ -1,6 +1,5 @@
 import fsp from 'fs/promises';
 import fs from 'fs';
-import Listr from 'listr';
 
 const saveData = (filepath, data) =>
   fsp.writeFile(

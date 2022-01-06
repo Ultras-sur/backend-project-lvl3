@@ -1,3 +1,5 @@
 /node_modules/
 /__tests__/
 /__fixtures__/
+__oldTests__
+__oldIndexFiles__

@@ -3,7 +3,6 @@ import fs from 'fs';
 import path from 'path';
 import axios from 'axios';
 import cheerio from 'cheerio';
-import debug from 'debug';
 import Listr from 'listr';
 import urlConverter from './urlConverter.js';
 import { saveData } from './utils.js';
@@ -16,7 +15,7 @@ const errors = {
 
 const checkAccess = (dir) =>
   fsp.access(dir, fs.constants.W_OK).catch((err) => {
-    throw new Error(`${errors[err.code]}: ${dir}`);
+    throw new Error(err.message);
   });
 
 const pageLoader = (url) =>
@@ -24,9 +23,6 @@ const pageLoader = (url) =>
     .get(url)
     .then((response) => response)
     .catch((err) => {
-      // console.error(errors[err.code]);
-      // throw err;
-      // process.exit();
       throw new Error(`${errors[err.code]}: ${url}`);
     });
 
@@ -125,6 +121,7 @@ const searchPageResources = (pageContent, pageUrl, resourceFolderPath) => {
   return { $, resources };
 };
 
+// eslint-disable-next-line no-unused-vars
 const downLoadResources = (data, resourceFolderPath) => {
   const { $, resources } = data;
   return fsp

@@ -9,8 +9,12 @@ import saveUrl from '../src/index5.js';
 import debug from 'debug';
 import { fileIsExists, seeFiles } from '../src/utils.js';
 import cheerio from 'cheerio';
+import { expect } from '@jest/globals';
 
-const checkAccess = (dir) => fsp.access(dir, fs.constants.R_OK);
+const checkAccess = (dir) =>
+  fsp.access(dir, fs.constants.W_OK).catch((err) => {
+    throw new Error(err.message);
+  });
 
 axios.defaults.adapter = httpAdapter;
 const f = debug('testIndex: BeforeAll');
@@ -48,49 +52,33 @@ beforeAll(async () => {
   nock(baseURL).get('/assets/professions/nodejs.png').reply(200, testData3);
   nock(baseURL).get('/packs/js/runtime.js').reply(200, testData4);
   nock(baseURL).get('/courses2').reply(200, testData5);
-  await saveUrl(`${baseURL}/courses`, `${tempFolder}`)
-    .then(async () => {
-      const testPage = await fsp.readFile(path.join(tempFolder, truePageName));
-      return testPage;
-    })
-    .then((testPage) => {
-      return (testLinks = pageTags.reduce((acc, [tag, tagAttr]) => {
-        const $ = cheerio.load(testPage);
-        $(tag).each((i, pageTag) => {
-          acc.push($(pageTag).attr(tagAttr));
-        });
-        return acc;
-      }, []));
-    });
+
   // .then(console.log);
   f('END');
 });
 
-test('Check downloaded files and names', async () => {
-  h('START');
+test('Check errors', async () => {
+  const falseFolder = './1234';
+  const falseUrl = 'http://www.tim453.org';
+  // const result = await saveUrl(`${baseURL}/courses`, `${falseFolder}`);
 
-  const resourcePath = path.join(tempFolder, trueFolderName);
-  const checkImage = await fileIsExists(path.join(resourcePath, trueImageName));
-  const checkCss = await fileIsExists(path.join(resourcePath, trueCssFileName));
-  const checkJs = await fileIsExists(path.join(resourcePath, trueJsFileName));
-  const checkPage = await fileIsExists(path.join(tempFolder, truePageName));
-  const checkLinkToPage = await fileIsExists(
-    path.join(resourcePath, trueLinkToPageName)
-  );
+  /* try {
+    await saveUrl(`${baseURL}/courses`, `${falseFolder}`);
+  } catch (e) {
+    expect(e).toThrow(Error);
+  } */
 
-  await expect(checkPage).toBe(true);
-  await expect(checkImage).toBe(true);
-  await expect(checkCss).toBe(true);
-  await expect(checkJs).toBe(true);
-  await expect(checkLinkToPage).toBe(true);
+  expect(async () => {
+    await saveUrl(`${baseURL}/courses`, falseFolder);
+  }).rejects.toThrowError('./1234');
 
-  h('END');
+  expect(async () => {
+    await saveUrl(falseUrl, tempFolder);
+  }).rejects.toThrowError(falseUrl);
+
+  /* expect(async () => {
+    await checkAccess(falseFolder);
+  }).rejects.toThrow(Error); */
 });
 
-test('Check changed links', () => {
-  const resourcePath = path.join(tempFolder, trueFolderName);
-  expect(testLinks).toContain(`${path.join(resourcePath, trueLinkToPageName)}`);
-  expect(testLinks).toContain(`${path.join(resourcePath, trueImageName)}`);
-  expect(testLinks).toContain(`${path.join(resourcePath, trueCssFileName)}`);
-  expect(testLinks).toContain(`${path.join(resourcePath, trueJsFileName)}`);
-});
+//
