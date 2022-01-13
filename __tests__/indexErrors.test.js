@@ -11,9 +11,6 @@ import { expect } from '@jest/globals';
 
 axios.defaults.adapter = httpAdapter;
 const f = debug('testIndex: BeforeAll');
-const g = debug('testIndex: BeforeEach');
-const h = debug('testIndex: TEST');
-const a = debug('testIndex: TEST');
 
 const baseURL = 'https://ru.hexlet.io';
 
