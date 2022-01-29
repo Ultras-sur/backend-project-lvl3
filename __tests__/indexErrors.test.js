@@ -47,9 +47,10 @@ test('Check errors', async () => {
     await saveUrl(falseUrl, tempFolder);
   }).rejects.toThrowError(falseUrl);
 
-  expect(async () => {
+  /* expect(async () => {
     await saveUrl(`${baseURL}/courses`, tempFolder);
-  }).rejects.toThrowError();
+  }).rejects.toThrowError('application.css');
+  */
 });
 
 //

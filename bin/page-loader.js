@@ -11,7 +11,8 @@ program
   .option('-o, --output [dir]', "output dir (default: '/__loaded_pages__')")
   .action((url) => {
     const options = program.opts();
-    saveUrl(url, options.output).catch((err) => console.error(err));
+    saveUrl(url, options.output);
+    // .catch((err) => console.error(err));
   });
 
 program.parse(process.argv);
