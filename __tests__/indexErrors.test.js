@@ -5,9 +5,8 @@ import os from 'os';
 import nock from 'nock';
 import axios from 'axios';
 import httpAdapter from 'axios/lib/adapters/http';
-import saveUrl from '../src/index5.js';
 import debug from 'debug';
-import { expect } from '@jest/globals';
+import saveUrl from '../src/index5.js';
 
 axios.defaults.adapter = httpAdapter;
 const f = debug('testIndex: BeforeAll');
@@ -37,7 +36,7 @@ beforeAll(async () => {
 test('Check errors', async () => {
   const falseFolder = './1234';
   const falseUrl = 'http://www.tim453.org';
-  const falseFileUrl = `${baseURL}/assets/application.css`;
+  // const falseFileUrl = `${baseURL}/assets/application.css`;
 
   expect(async () => {
     await saveUrl(`${baseURL}/courses`, falseFolder);
