@@ -152,7 +152,7 @@ const buildListrTasks = (arr) =>
 const progressHandle = (list) => {
   const tasks = new Listr(list, { concurrent: true });
 
-  return tasks.run().catch((err) => console.error(err.message));
+  return tasks.run().catch((err) => console.log(err.message));
   // console.error(`${err.message} (${err.config.url})`));
 };
 
