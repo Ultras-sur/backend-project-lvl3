@@ -52,7 +52,7 @@ const binaryFileLoader = (fileUrl, filePath) =>
     })
     .catch(
       (err) => {
-        throw new Error(err);
+        throw new Error(`Error saving image: ${err.message} (${fileUrl})`);
       }
       // console.error(`Error saving image: ${err.message} (${fileUrl})`)
     );
