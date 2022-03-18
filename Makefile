@@ -17,4 +17,4 @@ test:
 	npx -n '--experimental-vm-modules --no-warnings' jest --forceExit
 
 test-coverage:	
-	npm test -- '--experimental-vm-modules --no-warnings' --coverage -coverageProvider=v8a
+	npm test -- --coverage --coverageProvider=v8 --forceExit

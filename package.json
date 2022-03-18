@@ -4,7 +4,7 @@
   "description": "[![Actions Status](https://github.com/Ultras-sur/backend-project-lvl3/workflows/hexlet-check/badge.svg)](https://github.com/Ultras-sur/backend-project-lvl3/actions)",
   "main": "bin/page-loader.js",
   "scripts": {
-    "test": "npx -n '--experimental-vm-modules --no-warnings' jest --watch",
+    "test": "npx -n '--experimental-vm-modules --no-warnings' jest",
     "format": "prettier --write ."
   },
   "bin": {
