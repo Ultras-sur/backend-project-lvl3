@@ -2,14 +2,9 @@ import fsp from 'fs/promises';
 import fs from 'fs';
 
 const saveData = (filepath, data) =>
-  fsp.writeFile(
-    filepath,
-    data,
-    (err) => {
-      throw new Error(err.message);
-    }
-    // console.error(error.message)
-  );
+  fsp.writeFile(filepath, data, (err) => {
+    throw new Error(err.message);
+  });
 
 const fileIsExists = (path) =>
   new Promise((resolve, reject) => {
@@ -26,9 +21,6 @@ const fileIsExists = (path) =>
   });
 
 const seeFiles = async (path) =>
-  fsp
-    .readdir(path)
-    // .then((files) => files.forEach((file) => console.log(`${path}/${file}`)));
-    .then((files) => console.log(files));
+  fsp.readdir(path).then((files) => console.log(files));
 
 export { saveData, fileIsExists, seeFiles };

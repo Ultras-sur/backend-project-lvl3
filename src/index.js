@@ -4,7 +4,7 @@ import path from 'path';
 import axios from 'axios';
 import cheerio from 'cheerio';
 import Listr from 'listr';
-import urlConverter from './urlConverter.js';
+import urlNameService from './urlNameService.js';
 import { saveData } from './utils.js';
 
 const defaultFolder = './__loaded_pages__';
@@ -84,9 +84,9 @@ const tagHandler = ($, tag, pageUrl, resourceFolderPath) => {
       const pagelink = new URL($(pageTag).attr(tagAttr), pageUrl.origin);
       if (pageUrl.host === pagelink.host) {
         if (pagelink.href.match(/\.\w+$/gi) !== null) {
-          const fileName = urlConverter.fileName(pagelink.href);
+          const fileName = urlNameService.createFileName(pagelink.href);
           const midifiedPathURL = path.join(
-            urlConverter.folderName(pageUrl.origin),
+            urlNameService.createFolderName(pageUrl.origin),
             fileName
           );
           const newFilePath = path.join(resourceFolderPath, fileName);
@@ -97,9 +97,9 @@ const tagHandler = ($, tag, pageUrl, resourceFolderPath) => {
             filePath: newFilePath,
           });
         } else {
-          const fileName = urlConverter.pageName(pagelink.href);
+          const fileName = urlNameService.createPageName(pagelink.href);
           const midifiedPathURL = path.join(
-            urlConverter.folderName(pageUrl.origin),
+            urlNameService.createFolderName(pageUrl.origin),
             fileName
           );
           const newFilePath = path.join(resourceFolderPath, fileName);
@@ -174,8 +174,8 @@ const downLoadResourcesListr = (data, resourceFolderPath) => {
 };
 
 export default (pageUrl, outputFolder = defaultFolder) => {
-  const pageFilename = urlConverter.pageName(pageUrl);
-  const resourceFolderName = urlConverter.folderName(pageUrl);
+  const pageFilename = urlNameService.createPageName(pageUrl);
+  const resourceFolderName = urlNameService.createFolderName(pageUrl);
   const pageFilePath = path.join(outputFolder, pageFilename);
   const resourceFolderPath = path.join(outputFolder, resourceFolderName);
 
