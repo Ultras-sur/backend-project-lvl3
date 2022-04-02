@@ -5,13 +5,17 @@ import axios from 'axios';
 import cheerio from 'cheerio';
 import Listr from 'listr';
 import urlNameService from './urlNameService.js';
-import { saveData } from './utils.js';
 
 const defaultFolder = './__loaded_pages__';
 const errors = {
   ENOTFOUND: 'URL is not found',
   ENOENT: `Can't access to path or not found`,
 };
+
+const saveData = (filepath, data) =>
+  fsp.writeFile(filepath, data, (err) => {
+    throw new Error(err.message);
+  });
 
 const checkAccess = (dir) =>
   fsp.access(dir, fs.constants.W_OK).catch((err) => {
@@ -30,16 +34,7 @@ const pageLoader = (url) =>
       );
     });
 
-const savePage = (filepath, data) =>
-  /* const task = new Listr([
-    {
-      title: `Loading page: ${url}`,
-      task: () => fsp.writeFile(filepath, data),
-    },
-  ]);
-
-  task.run().catch((err) => console.error(err.message)); */
-  fsp.writeFile(filepath, data);
+const savePage = (filepath, data) => fsp.writeFile(filepath, data);
 
 const binaryFileLoader = (fileUrl, filePath) =>
   axios({
@@ -50,12 +45,9 @@ const binaryFileLoader = (fileUrl, filePath) =>
     .then((response) => {
       response.data.pipe(fs.createWriteStream(filePath));
     })
-    .catch(
-      (err) => {
-        throw new Error(`Error saving image: ${err.message} (${fileUrl})`);
-      }
-      // console.error(`Error saving image: ${err.message} (${fileUrl})`)
-    );
+    .catch((err) => {
+      throw new Error(`Error saving image: ${err.message} (${fileUrl})`);
+    });
 
 const fileLoader = (url, filePath) =>
   axios.get(url).then((response) => saveData(filePath, response.data));
@@ -129,6 +121,7 @@ const searchPageResources = (pageContent, pageUrl, resourceFolderPath) => {
   return { $, resources };
 };
 
+// download resources whithout Listr
 // eslint-disable-next-line no-unused-vars
 const downLoadResources = (data, resourceFolderPath) => {
   const { $, resources } = data;
@@ -148,11 +141,7 @@ const buildListrTasks = (arr) =>
   arr.reduce((acc, elem) => {
     acc.push({
       title: `${elem.fileUrl}`,
-      task: () =>
-        elem.load(elem.fileUrl, elem.filePath).catch(
-          (err) => Promise.reject(new Error(err.message))
-          // throw new Error(err.message);
-        ),
+      task: () => elem.load(elem.fileUrl, elem.filePath).catch(),
     });
     return acc;
   }, []);
@@ -161,7 +150,6 @@ const progressHandle = (list) => {
   const tasks = new Listr(list, { concurrent: true });
 
   return tasks.run().catch((err) => console.log(err.message));
-  // console.error(`${err.message} (${err.config.url})`));
 };
 
 const downLoadResourcesListr = (data, resourceFolderPath) => {
