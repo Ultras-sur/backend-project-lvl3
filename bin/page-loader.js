@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 import { Command } from 'commander/esm.mjs';
-import saveUrl from '../src/index5.js';
+import pageLoader from '../src/index.js';
 
 const program = new Command();
 
@@ -11,7 +11,14 @@ program
   .option('-o, --output [dir]', "output dir (default: '/__loaded_pages__')")
   .action((url) => {
     const options = program.opts();
-    saveUrl(url, options.output).catch((err) => console.error(err));
+    pageLoader(url, options.output)
+      .then((filePath) =>
+        console.log(`Page was successfully downloaded into '${filePath}'`)
+      )
+      .catch((err) => {
+        console.error(err);
+        process.exit(1);
+      });
   });
 
 program.parse(process.argv);

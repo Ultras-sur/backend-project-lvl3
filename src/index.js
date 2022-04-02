@@ -15,7 +15,9 @@ const errors = {
 
 const checkAccess = (dir) =>
   fsp.access(dir, fs.constants.W_OK).catch((err) => {
-    throw new Error(err.message);
+    throw new Error(
+      `${errors[err.code] ? errors[err.code] : `${err.message}`} : ${dir}`
+    );
   });
 
 const pageLoader = (url) =>
@@ -23,7 +25,9 @@ const pageLoader = (url) =>
     .get(url)
     .then((response) => response)
     .catch((err) => {
-      throw new Error(`${errors[err.code]}: ${url}`);
+      throw new Error(
+        `${errors[err.code] ? errors[err.code] : `${err.message}`} : ${url}`
+      );
     });
 
 const savePage = (filepath, data) =>
@@ -35,11 +39,7 @@ const savePage = (filepath, data) =>
   ]);
 
   task.run().catch((err) => console.error(err.message)); */
-  fsp
-    .writeFile(filepath, data)
-    .then(() =>
-      console.log(`Page was successfully downloaded into '${filepath}'`)
-    );
+  fsp.writeFile(filepath, data);
 
 const binaryFileLoader = (fileUrl, filePath) =>
   axios({
@@ -85,8 +85,12 @@ const tagHandler = ($, tag, pageUrl, resourceFolderPath) => {
       if (pageUrl.host === pagelink.host) {
         if (pagelink.href.match(/\.\w+$/gi) !== null) {
           const fileName = urlConverter.fileName(pagelink.href);
+          const midifiedPathURL = path.join(
+            urlConverter.folderName(pageUrl.origin),
+            fileName
+          );
           const newFilePath = path.join(resourceFolderPath, fileName);
-          $(pageTag).attr(tagAttr, newFilePath);
+          $(pageTag).attr(tagAttr, midifiedPathURL);
           resources.push({
             fileUrl: pagelink.href,
             load: tagTypes[tag].downloader,
@@ -94,8 +98,12 @@ const tagHandler = ($, tag, pageUrl, resourceFolderPath) => {
           });
         } else {
           const fileName = urlConverter.pageName(pagelink.href);
+          const midifiedPathURL = path.join(
+            urlConverter.folderName(pageUrl.origin),
+            fileName
+          );
           const newFilePath = path.join(resourceFolderPath, fileName);
-          $(pageTag).attr(tagAttr, newFilePath);
+          $(pageTag).attr(tagAttr, midifiedPathURL);
           resources.push({
             fileUrl: pagelink.href,
             load: tagTypes[tag].downloader,
@@ -166,9 +174,9 @@ const downLoadResourcesListr = (data, resourceFolderPath) => {
 };
 
 export default (pageUrl, outputFolder = defaultFolder) => {
-  const pageFilename = path.join(urlConverter.pageName(pageUrl));
-  const pageFilePath = path.join(outputFolder, pageFilename);
+  const pageFilename = urlConverter.pageName(pageUrl);
   const resourceFolderName = urlConverter.folderName(pageUrl);
+  const pageFilePath = path.join(outputFolder, pageFilename);
   const resourceFolderPath = path.join(outputFolder, resourceFolderName);
 
   return checkAccess(outputFolder)
