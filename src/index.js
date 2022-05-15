@@ -4,8 +4,11 @@ import path from 'path';
 import axios from 'axios';
 import cheerio from 'cheerio';
 import Listr from 'listr';
+import debug from 'debug';
 import urlNameService from './urlNameService.js';
 
+const log = 'page-loader';
+const pageLoaderLog = debug(log);
 const defaultFolder = './__loaded_pages__';
 const errors = {
   ENOTFOUND: 'URL is not found',
@@ -17,15 +20,18 @@ const saveData = (filepath, data) =>
     throw new Error(err.message);
   });
 
-const checkAccess = (dir) =>
-  fsp.access(dir, fs.constants.W_OK).catch((err) => {
+const checkAccess = (dir) => {
+  pageLoaderLog(`Check directory: ${dir}`);
+  return fsp.access(dir, fs.constants.W_OK).catch((err) => {
     throw new Error(
       `${errors[err.code] ? errors[err.code] : `${err.message}`} : ${dir}`
     );
   });
+};
 
-const pageLoader = (url) =>
-  axios
+const pageLoader = (url) => {
+  pageLoaderLog(`Loading data: ${url}`);
+  return axios
     .get(url)
     .then((response) => response)
     .catch((err) => {
@@ -33,8 +39,12 @@ const pageLoader = (url) =>
         `${errors[err.code] ? errors[err.code] : `${err.message}`} : ${url}`
       );
     });
+};
 
-const savePage = (filepath, data) => fsp.writeFile(filepath, data);
+const savePage = (filepath, data) => {
+  pageLoaderLog(`Download page`);
+  fsp.writeFile(filepath, data);
+};
 
 const binaryFileLoader = (fileUrl, filePath) =>
   axios({
@@ -69,12 +79,12 @@ const tagTypes = {
 
 const tagHandler = ($, tag, pageUrl, resourceFolderPath) => {
   const resources = [];
-
   const tagAttr = tagTypes[tag].attr;
   $(tag).each((i, pageTag) => {
     if ($(pageTag).attr(tagAttr)) {
       const pagelink = new URL($(pageTag).attr(tagAttr), pageUrl.origin);
       if (pageUrl.host === pagelink.host) {
+        pageLoaderLog(`Found resource: ${pagelink}`);
         if (pagelink.href.match(/\.\w+$/gi) !== null) {
           const fileName = urlNameService.createFileName(pagelink.href);
           const midifiedPathURL = path.join(
@@ -110,7 +120,7 @@ const tagHandler = ($, tag, pageUrl, resourceFolderPath) => {
 
 const searchPageResources = (pageContent, pageUrl, resourceFolderPath) => {
   let $ = cheerio.load(pageContent.data);
-
+  pageLoaderLog(`Searching resources`);
   const resources = Object.keys(tagTypes).reduce((acc, tag) => {
     const result = tagHandler($, tag, new URL(pageUrl), resourceFolderPath);
     $ = result.$;
@@ -137,24 +147,25 @@ const downLoadResources = (data, resourceFolderPath) => {
   // .then(() => $);
 };
 
-const buildListrTasks = (arr) =>
-  arr.reduce((acc, elem) => {
+const buildListrTasks = (arr) => {
+  pageLoaderLog(`Create Listr tasks`);
+  return arr.reduce((acc, elem) => {
     acc.push({
       title: `${elem.fileUrl}`,
       task: () => elem.load(elem.fileUrl, elem.filePath).catch(),
     });
     return acc;
   }, []);
+};
 
 const progressHandle = (list) => {
+  pageLoaderLog(`Download resources`);
   const tasks = new Listr(list, { concurrent: true });
-
   return tasks.run().catch((err) => console.log(err.message));
 };
 
 const downLoadResourcesListr = (data, resourceFolderPath) => {
   const { $, resources } = data;
-
   return fsp.mkdir(resourceFolderPath, { recursive: true }).then(() => {
     const list = buildListrTasks(resources);
     return progressHandle(list).then(() => $);
@@ -166,7 +177,7 @@ export default (pageUrl, outputFolder = defaultFolder) => {
   const resourceFolderName = urlNameService.createFolderName(pageUrl);
   const pageFilePath = path.join(outputFolder, pageFilename);
   const resourceFolderPath = path.join(outputFolder, resourceFolderName);
-
+  pageLoaderLog(`Starting load page`, pageUrl);
   return checkAccess(outputFolder)
     .then(() => pageLoader(pageUrl))
     .then((pageContent) =>

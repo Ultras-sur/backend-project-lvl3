@@ -13,8 +13,11 @@ push:
 format:
 	npm run format
 
-test: 
+test-easy: 
 	npx -n '--experimental-vm-modules --no-warnings' jest 
 
 test-coverage:	
 	npm test -- --coverage --coverageProvider=v8 --forceExit
+
+test: 
+	DEBUG=page-loader* npm test 	
