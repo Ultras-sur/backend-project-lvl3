@@ -1,5 +1,5 @@
 {
-  "name": "backend-project-lvl3",
+  "name": "@hexlet/code",
   "version": "1.0.0",
   "description": "[![Actions Status](https://github.com/Ultras-sur/backend-project-lvl3/workflows/hexlet-check/badge.svg)](https://github.com/Ultras-sur/backend-project-lvl3/actions)",
   "main": "bin/page-loader.js",
