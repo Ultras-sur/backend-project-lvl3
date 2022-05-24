@@ -20,4 +20,6 @@ test-coverage:
 	npm test -- --coverage --coverageProvider=v8 --forceExit
 
 test: 
-	DEBUG=page-loader* npm test 	
+	DEBUG=page-loader* npm test
+
+.PHONY: test
