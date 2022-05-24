@@ -42,7 +42,7 @@ const pageLoader = (url) => {
 };
 
 const savePage = (filepath, data) => {
-  pageLoaderLog(`Download page`);
+  pageLoaderLog(`Download page to ${filepath}`);
   fsp.writeFile(filepath, data);
 };
 
@@ -144,7 +144,6 @@ const downLoadResources = (data, resourceFolderPath) => {
       return Promise.all(promises).then(() => $);
     })
     .catch((err) => console.error(err.message));
-  // .then(() => $);
 };
 
 const buildListrTasks = (arr) => {
@@ -184,6 +183,6 @@ export default (pageUrl, outputFolder = defaultFolder) => {
       searchPageResources(pageContent, pageUrl, resourceFolderPath)
     )
     .then((data) => downLoadResourcesListr(data, resourceFolderPath))
-    .then(($) => savePage(pageFilePath, $.html()))
+    .then((data) => savePage(pageFilePath, data.html()))
     .then(() => pageFilePath);
 };
