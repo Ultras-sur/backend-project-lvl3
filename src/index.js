@@ -43,7 +43,7 @@ const pageLoader = (url) => {
 
 const savePage = (filepath, data) => {
   pageLoaderLog(`Download page to ${filepath}`);
-  fsp.writeFile(filepath, data);
+  return fsp.writeFile(filepath, data);
 };
 
 const binaryFileLoader = (fileUrl, filePath) =>

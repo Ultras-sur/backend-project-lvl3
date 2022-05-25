@@ -2,7 +2,7 @@
   "name": "@hexlet/code",
   "version": "1.0.0",
   "description": "[![Actions Status](https://github.com/Ultras-sur/backend-project-lvl3/workflows/hexlet-check/badge.svg)](https://github.com/Ultras-sur/backend-project-lvl3/actions)",
-  "main": "bin/page-loader.js",
+  "main": "src/index.js",
   "scripts": {
     "test": "npx -n '--experimental-vm-modules --no-warnings' jest",
     "format": "prettier --write ."
@@ -28,11 +28,9 @@
     "commander": "^7.1.0",
     "debug": "^4.3.4",
     "listr": "^0.14.3",
-    "lodash": "4.17.21",
-    "node": "^17.7.2"
+    "lodash": "4.17.21"
   },
   "devDependencies": {
-    "@babel/preset-env": "^7.18.0",
     "eslint": "^7.17.0",
     "eslint-config-airbnb-base": "^14.2.1",
     "eslint-config-prettier": "^8.5.0",
