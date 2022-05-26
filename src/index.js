@@ -88,7 +88,9 @@ const tagHandler = ($, tag, pageUrl, resourceFolderPath) => {
         if (pagelink.href.match(/\.\w+$/gi) !== null) {
           const fileName = urlNameService.createFileName(pagelink.href);
           const midifiedPathURL = path.join(
-            urlNameService.createFolderName(pageUrl.origin),
+            urlNameService.createFolderName(
+              `${pageUrl.origin}${pageUrl.pathname}`
+            ),
             fileName
           );
           const newFilePath = path.join(resourceFolderPath, fileName);
@@ -101,7 +103,9 @@ const tagHandler = ($, tag, pageUrl, resourceFolderPath) => {
         } else {
           const fileName = urlNameService.createPageName(pagelink.href);
           const midifiedPathURL = path.join(
-            urlNameService.createFolderName(pageUrl.origin),
+            urlNameService.createFolderName(
+              `${pageUrl.origin}${pageUrl.pathname}`
+            ),
             fileName
           );
           const newFilePath = path.join(resourceFolderPath, fileName);
