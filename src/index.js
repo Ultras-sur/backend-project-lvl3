@@ -22,7 +22,7 @@ const saveData = (filepath, data) =>
 
 const checkAccess = (dir) => {
   pageLoaderLog(`Check directory: ${dir}`);
-  return fsp.access(dir, fs.constants.W_OK).catch((err) => {
+  return fsp.access(dir).catch((err) => {
     throw new Error(
       `${errors[err.code] ? errors[err.code] : `${err.message}`} : ${dir}`
     );
