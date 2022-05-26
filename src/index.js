@@ -59,8 +59,18 @@ const binaryFileLoader = (fileUrl, filePath) =>
       throw new Error(`Error saving image: ${err.message} (${fileUrl})`);
     });
 
-const fileLoader = (url, filePath) =>
-  axios.get(url).then((response) => saveData(filePath, response.data));
+// eslint-disable-next-line spaced-comment
+/*const fileLoader = (url, filePath) =>
+  axios.get(url)
+  .then((response) => saveData(filePath, response.data));*/
+
+  const fileLoader = (resourceUrl, filePath) =>
+  axios({
+    method: 'get',
+    url: resourceUrl,
+    responseType: 'arraybuffer',
+  })
+  .then((response) => saveData(filePath, response.data));
 
 const tagTypes = {
   img: {
