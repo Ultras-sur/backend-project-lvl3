@@ -28,7 +28,7 @@
     "commander": "^7.1.0",
     "debug": "^4.3.4",
     "listr": "^0.14.3",
-    "lodash": "4.17.21",
+    "lodash": "4.17.21"
   },
   "devDependencies": {
     "eslint": "^7.17.0",
