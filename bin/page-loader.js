@@ -8,7 +8,7 @@ program
   .description('Page loader utility')
   .arguments('<url>')
   .version('0.0.1')
-  .option('-o, --output [dir]', "output dir (default: '/__loaded_pages__')")
+  .option('-o, --output [dir]', 'output dir path', process.cwd())
   .action((url) => {
     const options = program.opts();
     pageLoader(url, options.output)
