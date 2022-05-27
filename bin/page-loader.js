@@ -12,9 +12,7 @@ program
   .action((url) => {
     const options = program.opts();
     pageLoader(url, options.output)
-      .then((filePath) =>
-        console.log(`Page was successfully downloaded into '${filePath}'`)
-      )
+      .then((filePath) => console.log(`Page was successfully downloaded into '${filePath}'`))
       .catch((err) => {
         console.error(err);
         process.exit(1);

@@ -11,19 +11,18 @@ const log = 'page-loader';
 const pageLoaderLog = debug(log);
 const errors = {
   ENOTFOUND: 'URL is not found',
-  ENOENT: `Can't access to path or not found`,
+  ENOENT: 'Can\'t access to path or not found',
 };
 
-const saveData = (filepath, data) =>
-  fsp.writeFile(filepath, data, (err) => {
-    throw new Error(err.message);
-  });
+const saveData = (filepath, data) => fsp.writeFile(filepath, data, (err) => {
+  throw new Error(err.message);
+});
 
 const checkAccess = (dir) => {
   pageLoaderLog(`Check directory: ${dir}`);
   return fsp.access(dir).catch((err) => {
     throw new Error(
-      `${errors[err.code] ? errors[err.code] : `${err.message}`} : ${dir}`
+      `${errors[err.code] ? errors[err.code] : `${err.message}`} : ${dir}`,
     );
   });
 };
@@ -35,7 +34,7 @@ const pageLoader = (url) => {
     .then((response) => response)
     .catch((err) => {
       throw new Error(
-        `${errors[err.code] ? errors[err.code] : `${err.message}`} : ${url}`
+        `${errors[err.code] ? errors[err.code] : `${err.message}`} : ${url}`,
       );
     });
 };
@@ -45,30 +44,28 @@ const savePage = (filepath, data) => {
   return fsp.writeFile(filepath, data);
 };
 
-const binaryFileLoader = (fileUrl, filePath) =>
-  axios({
-    method: 'get',
-    url: fileUrl,
-    responseType: 'stream',
+const binaryFileLoader = (fileUrl, filePath) => axios({
+  method: 'get',
+  url: fileUrl,
+  responseType: 'stream',
+})
+  .then((response) => {
+    response.data.pipe(fs.createWriteStream(filePath));
   })
-    .then((response) => {
-      response.data.pipe(fs.createWriteStream(filePath));
-    })
-    .catch((err) => {
-      throw new Error(`Error saving image: ${err.message} (${fileUrl})`);
-    });
+  .catch((err) => {
+    throw new Error(`Error saving image: ${err.message} (${fileUrl})`);
+  });
 
 // eslint-disable-next-line spaced-comment
 /*const fileLoader = (url, filePath) =>
   axios.get(url)
   .then((response) => saveData(filePath, response.data));*/
 
-  const fileLoader = (resourceUrl, filePath) =>
-  axios({
-    method: 'get',
-    url: resourceUrl,
-    responseType: 'arraybuffer',
-  })
+const fileLoader = (resourceUrl, filePath) => axios({
+  method: 'get',
+  url: resourceUrl,
+  responseType: 'arraybuffer',
+})
   .then((response) => saveData(filePath, response.data));
 
 const tagTypes = {
@@ -98,9 +95,9 @@ const tagHandler = ($, tag, pageUrl, resourceFolderPath) => {
           const fileName = urlNameService.createFileName(pagelink.href);
           const midifiedPathURL = path.join(
             urlNameService.createFolderName(
-              `${pageUrl.origin}${pageUrl.pathname}`
+              `${pageUrl.origin}${pageUrl.pathname}`,
             ),
-            fileName
+            fileName,
           );
           const newFilePath = path.join(resourceFolderPath, fileName);
           $(pageTag).attr(tagAttr, midifiedPathURL);
@@ -113,9 +110,9 @@ const tagHandler = ($, tag, pageUrl, resourceFolderPath) => {
           const fileName = urlNameService.createPageName(pagelink.href);
           const midifiedPathURL = path.join(
             urlNameService.createFolderName(
-              `${pageUrl.origin}${pageUrl.pathname}`
+              `${pageUrl.origin}${pageUrl.pathname}`,
             ),
-            fileName
+            fileName,
           );
           const newFilePath = path.join(resourceFolderPath, fileName);
           $(pageTag).attr(tagAttr, midifiedPathURL);
@@ -133,7 +130,7 @@ const tagHandler = ($, tag, pageUrl, resourceFolderPath) => {
 
 const searchPageResources = (pageContent, pageUrl, resourceFolderPath) => {
   let $ = cheerio.load(pageContent.data);
-  pageLoaderLog(`Searching resources`);
+  pageLoaderLog('Searching resources');
   const resources = Object.keys(tagTypes).reduce((acc, tag) => {
     const result = tagHandler($, tag, new URL(pageUrl), resourceFolderPath);
     $ = result.$;
@@ -151,16 +148,14 @@ const downLoadResources = (data, resourceFolderPath) => {
   return fsp
     .mkdir(resourceFolderPath, { recursive: true })
     .then(() => {
-      const promises = resources.map((resource) =>
-        resource.load(resource.fileUrl, resource.filePath)
-      );
+      const promises = resources.map((resource) => resource.load(resource.fileUrl, resource.filePath));
       return Promise.all(promises).then(() => $);
     })
     .catch((err) => console.error(err.message));
 };
 
 const buildListrTasks = (arr) => {
-  pageLoaderLog(`Create Listr tasks`);
+  pageLoaderLog('Create Listr tasks');
   return arr.reduce((acc, elem) => {
     acc.push({
       title: `${elem.fileUrl}`,
@@ -171,7 +166,7 @@ const buildListrTasks = (arr) => {
 };
 
 const progressHandle = (list) => {
-  pageLoaderLog(`Download resources`);
+  pageLoaderLog('Download resources');
   const tasks = new Listr(list, { concurrent: true });
   return tasks.run().catch((err) => console.log(err.message));
 };
@@ -189,12 +184,10 @@ export default (pageUrl, outputFolder = process.cwd()) => {
   const resourceFolderName = urlNameService.createFolderName(pageUrl);
   const pageFilePath = path.join(outputFolder, pageFilename);
   const resourceFolderPath = path.join(outputFolder, resourceFolderName);
-  pageLoaderLog(`Starting load page`, pageUrl);
+  pageLoaderLog('Starting load page', pageUrl);
   return checkAccess(outputFolder)
     .then(() => pageLoader(pageUrl))
-    .then((pageContent) =>
-      searchPageResources(pageContent, pageUrl, resourceFolderPath)
-    )
+    .then((pageContent) => searchPageResources(pageContent, pageUrl, resourceFolderPath))
     .then((data) => downLoadResourcesListr(data, resourceFolderPath))
     .then((data) => savePage(pageFilePath, data.html()))
     .then(() => pageFilePath);
