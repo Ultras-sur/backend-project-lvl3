@@ -9,7 +9,6 @@ import urlNameService from './urlNameService.js';
 
 const log = 'page-loader';
 const pageLoaderLog = debug(log);
-const defaultFolder = './__loaded_pages__';
 const errors = {
   ENOTFOUND: 'URL is not found',
   ENOENT: `Can't access to path or not found`,
@@ -185,7 +184,7 @@ const downLoadResourcesListr = (data, resourceFolderPath) => {
   });
 };
 
-export default (pageUrl, outputFolder = defaultFolder) => {
+export default (pageUrl, outputFolder = process.cwd()) => {
   const pageFilename = urlNameService.createPageName(pageUrl);
   const resourceFolderName = urlNameService.createFolderName(pageUrl);
   const pageFilePath = path.join(outputFolder, pageFilename);
