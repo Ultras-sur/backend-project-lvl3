@@ -6,9 +6,9 @@ import os from 'os';
 import nock from 'nock';
 import pageLoader from '../src/index.js';
 
-const __fileName = fileURLToPath(import.meta.url);
-const __dirName = path.dirname(__fileName);
-const getFixturesPath = (fileName) => path.join(__dirName, '..', '__fixtures__', fileName);
+const fileNameSystem = fileURLToPath(import.meta.url);
+const dirNameSystem = path.dirname(fileNameSystem);
+const getFixturesPath = (fileName) => path.join(dirNameSystem, '..', '__fixtures__', fileName);
 const readFile = (filePath) => fsp.readFile(filePath, 'utf-8');
 
 const baseURL = new URL('https://ru.hexlet.io/courses');
