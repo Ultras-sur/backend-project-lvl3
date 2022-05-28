@@ -1,4 +1,3 @@
-/* eslint-disable max-len */
 /* eslint-disable no-undef */
 import fsp from 'fs/promises';
 import path from 'path';
@@ -28,7 +27,8 @@ const resourcesPaths = [
 ];
 
 beforeAll(() => {
-  resourcesPaths.forEach(([pathURL, filePath]) => scope.get(pathURL).replyWithFile(200, getFixturesPath(filePath)));
+  resourcesPaths.forEach(([pathURL, filePath]) => scope.get(pathURL)
+    .replyWithFile(200, getFixturesPath(filePath)));
   scopeError.get('/').reply(404);
   scopeError.get('/anyResourse').reply(404);
 });
@@ -61,20 +61,16 @@ describe('Test: Normal bihavior without errors', () => {
 
 describe('Test: Expect errors', () => {
   test.each(
-    [['URL is not found', 'http://www.tim234.org/'],
+    [['Request failed with status code 404', 'http://www.tim234.org/'],
       ['Request failed with status code 404', 'http://www.tim234.org/anyResourse']],
-  )('Expect server response errors', ([assertion, url]) => {
-    expect(async () => {
-      await pageLoader(url, tempFolder);
-    }).rejects.toThrowError(assertion);
+  )('Expect server response errors', async (assertion, url) => {
+    await expect(pageLoader(url, tempFolder)).rejects.toThrowError(assertion);
   });
 
   test.each(
     [["Can't access to path or not found", './1234'],
-      ['not a directory', './1234.js']],
-  )('Expect file system errors', ([assertion, errorPath]) => {
-    expect(async () => {
-      await pageLoader(baseURL.href, errorPath);
-    }).rejects.toThrowError(assertion);
+      ['not a directory', './__fixtures__/ru-hexlet-io-courses.html']],
+  )('Expect file system errors', async (assertion, errorPath) => {
+    await expect(pageLoader(baseURL.href, errorPath)).rejects.toThrowError(assertion);
   });
 });

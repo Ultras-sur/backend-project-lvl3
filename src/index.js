@@ -134,8 +134,7 @@ const searchPageResources = (pageContent, pageUrl, resourceFolderPath) => {
   const resources = Object.keys(tagTypes).reduce((acc, tag) => {
     const result = tagHandler($, tag, new URL(pageUrl), resourceFolderPath);
     $ = result.$;
-    acc = [...acc, ...result.resources];
-    return acc;
+    return [...acc, ...result.resources];
   }, []);
 
   return { $, resources };
@@ -148,7 +147,7 @@ const downLoadResources = (data, resourceFolderPath) => {
   return fsp
     .mkdir(resourceFolderPath, { recursive: true })
     .then(() => {
-      const promises = resources.map((resource) => resource.load(resource.fileUrl, resource.filePath));
+      const promises = resources.map((file) => file.load(file.fileUrl, file.filePath));
       return Promise.all(promises).then(() => $);
     })
     .catch((err) => console.error(err.message));
